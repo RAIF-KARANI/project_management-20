@@ -34,6 +34,7 @@ export function createServer() {
   registerProjectRoutes(app);
   registerTaskRoutes(app);
   registerMetricsRoutes(app);
+  registerAuthRoutes(app);
 
   // Minimal OpenAPI spec endpoint for tooling
   app.get("/api/openapi.json", (_req, res) => {
