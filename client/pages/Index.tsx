@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import AppLayout from "@/components/layout/AppLayout";
 import type { MetricsResponse, Project, Task, CreateProjectInput, CreateTaskInput, User } from "@shared/api";
 
 function Stat({ label, value, accent }: { label: string; value: number | string; accent?: string }) {
@@ -37,7 +36,7 @@ function ProjectCard({ project, tasks }: { project: Project; tasks: Task[] }) {
       <div className="mt-4 h-2 rounded bg-muted">
         <div className="h-2 rounded bg-primary" style={{ width: `${pct}%` }} />
       </div>
-      <div className="mt-2 text-xs text-muted-foreground">{pct}% complete • {tasks.length} tasks</div>
+      <div className="mt-2 text-xs text-muted-foreground">{pct}% complete �� {tasks.length} tasks</div>
     </div>
   );
 }
@@ -63,7 +62,7 @@ export default function Index() {
   });
 
   return (
-    <AppLayout>
+    <div>
       <section className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Project Dashboard</h1>
@@ -166,6 +165,6 @@ export default function Index() {
           </div>
         </div>
       )}
-    </AppLayout>
+    </div>
   );
 }
