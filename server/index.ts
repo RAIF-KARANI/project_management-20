@@ -6,6 +6,7 @@ import { registerUserRoutes } from "./routes/users";
 import { registerProjectRoutes } from "./routes/projects";
 import { registerTaskRoutes } from "./routes/tasks";
 import { registerMetricsRoutes } from "./routes/metrics";
+import { registerAuthRoutes } from "./routes/auth";
 import { seed } from "./routes/store";
 
 export function createServer() {
