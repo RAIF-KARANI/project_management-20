@@ -18,8 +18,11 @@ export function createServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Seed demo data (in-memory). For production, connect to Postgres/MySQL.
-  seed();
+  // Seed demo data (in-memory). For production, attempt to init Postgres. If not configured, fall back to in-memory seed.
+  initDb().catch((e) => {
+    console.warn("Postgres not initialized (DATABASE_URL missing or error)", e?.message ?? e);
+    seed();
+  });
 
   // Health
   app.get("/api/ping", (_req, res) => {
