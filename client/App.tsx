@@ -11,7 +11,9 @@ import NotFound from "./pages/NotFound";
 import ProjectsPage from "./pages/Projects";
 import TasksPage from "./pages/Tasks";
 import UsersPage from "./pages/Users";
+import LoginPage from "./pages/Login";
 import AppLayout from "@/components/layout/AppLayout";
+import { AuthProvider } from "./hooks/useAuth";
 
 const queryClient = new QueryClient();
 
