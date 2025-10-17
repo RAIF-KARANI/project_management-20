@@ -8,10 +8,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import LoginPage from "./pages/Login";
 import ProjectsPage from "./pages/Projects";
 import TasksPage from "./pages/Tasks";
 import UsersPage from "./pages/Users";
-import LoginPage from "./pages/Login";
 import AppLayout from "@/components/layout/AppLayout";
 import { AuthProvider } from "./hooks/useAuth";
 
