@@ -8,6 +8,7 @@ import { registerTaskRoutes } from "./routes/tasks";
 import { registerMetricsRoutes } from "./routes/metrics";
 import { registerAuthRoutes } from "./routes/auth";
 import { seed } from "./routes/store";
+import { initDb, enabled as dbEnabled } from "./db/client";
 
 export function createServer() {
   const app = express();
