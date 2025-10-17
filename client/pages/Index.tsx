@@ -2,15 +2,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { MetricsResponse, Project, Task, CreateProjectInput, CreateTaskInput, User } from "@shared/api";
+import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
 
 function Stat({ label, value, accent }: { label: string; value: number | string; accent?: string }) {
   return (
-    <div className="rounded-lg border p-4 bg-card text-card-foreground">
+    <motion.div whileHover={{ y: -4 }} className="rounded-lg border p-4 bg-card text-card-foreground">
       <div className="text-xs uppercase text-muted-foreground">{label}</div>
       <div className={"mt-2 text-2xl font-bold " + (accent ?? "")}>
         {value}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -18,7 +20,7 @@ function ProjectCard({ project, tasks }: { project: Project; tasks: Task[] }) {
   const done = tasks.filter((t) => t.status === "DONE").length;
   const pct = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
   return (
-    <div className="rounded-lg border p-4 bg-card text-card-foreground">
+    <motion.div whileHover={{ scale: 1.02 }} className="rounded-lg border p-4 bg-card text-card-foreground">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="font-semibold text-lg">{project.name}</div>
@@ -36,13 +38,14 @@ function ProjectCard({ project, tasks }: { project: Project; tasks: Task[] }) {
       <div className="mt-4 h-2 rounded bg-muted">
         <div className="h-2 rounded bg-primary" style={{ width: `${pct}%` }} />
       </div>
-      <div className="mt-2 text-xs text-muted-foreground">{pct}% complete �� {tasks.length} tasks</div>
-    </div>
+      <div className="mt-2 text-xs text-muted-foreground">{pct}% complete • {tasks.length} tasks</div>
+    </motion.div>
   );
 }
 
 export default function Index() {
   const qc = useQueryClient();
+  const { user } = useAuth();
   const [projForm, setProjForm] = useState<Partial<CreateProjectInput>>({});
   const [taskForm, setTaskForm] = useState<Partial<CreateTaskInput>>({});
 
@@ -61,6 +64,9 @@ export default function Index() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["tasks"] }); qc.invalidateQueries({ queryKey: ["metrics"] }); },
   });
 
+  const canCreateProject = user?.role === "ADMIN" || user?.role === "MANAGER";
+  const canCreateTask = !!user;
+
   return (
     <div>
       <section className="flex items-center justify-between gap-4">
@@ -75,7 +81,9 @@ export default function Index() {
               setTaskForm({ projectId: projects.data[0].id, assigneeId: firstUser ?? null, title: "New Task", status: "TODO" });
             }
           }}>Quick Task</Button>
-          <Button onClick={() => setProjForm({ name: "New Project" })} variant="secondary">New Project</Button>
+          {canCreateProject && (
+            <Button onClick={() => setProjForm({ name: "New Project" })} variant="secondary">New Project</Button>
+          )}
         </div>
       </section>
 
@@ -99,7 +107,7 @@ export default function Index() {
           <h2 className="text-lg font-semibold">Recent Tasks</h2>
           <div className="space-y-2">
             {(tasks.data ?? []).slice(0, 6).map((t) => (
-              <div key={t.id} className="rounded border p-3 bg-card">
+              <motion.div key={t.id} whileHover={{ x: 4 }} className="rounded border p-3 bg-card">
                 <div className="flex items-center justify-between">
                   <div className="font-medium">{t.title}</div>
                   <span className={
@@ -109,7 +117,7 @@ export default function Index() {
                 {t.dueDate && (
                   <div className="text-xs text-muted-foreground mt-1">Due {new Date(t.dueDate).toLocaleDateString()}</div>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
