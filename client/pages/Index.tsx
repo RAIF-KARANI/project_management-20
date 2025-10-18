@@ -132,6 +132,11 @@ export default function Index() {
   const users = useQuery<User[]>({ queryKey: ["users"], queryFn: () => apiFetch("/api/users", token) });
   const tasks = useQuery<Task[]>({ queryKey: ["tasks"], queryFn: () => apiFetch("/api/tasks", token) });
 
+  // ensure lists are arrays to avoid runtime errors when backend returns an error object
+  const projectsList = Array.isArray(projects.data) ? projects.data : [];
+  const usersList = Array.isArray(users.data) ? users.data : [];
+  const tasksList = Array.isArray(tasks.data) ? tasks.data : [];
+
   const createProject = useMutation({
     mutationFn: async (input: CreateProjectInput) => apiFetch("/api/projects", token, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["projects"] }); qc.invalidateQueries({ queryKey: ["metrics"] }); },
