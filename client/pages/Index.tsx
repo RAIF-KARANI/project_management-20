@@ -156,6 +156,27 @@ export default function Index() {
     done: (tasks.data ?? []).filter((t) => t.status === "DONE").length,
   };
 
+  const performStatusChange = (task: Task, newStatus: TaskStatus, comment?: string) => {
+    const patch: any = { status: newStatus };
+    if (comment) patch.description = comment;
+    updateTask.mutate({ id: task.id, patch });
+  };
+
+  const requestStatusChange = (task: Task, newStatus: TaskStatus) => {
+    // admins/managers immediately perform
+    if (user?.role === "ADMIN" || user?.role === "MANAGER") {
+      performStatusChange(task, newStatus);
+      return;
+    }
+    // developers must be assigned and will be prompted for a description
+    if (user?.role === "DEVELOPER") {
+      if (task.assigneeId !== user.id) return alert("You can only update tasks assigned to you");
+      setEditingTaskId(task.id);
+      setEditingNewStatus(newStatus);
+      setEditComment("");
+    }
+  };
+
   const miniKanban = (column: TaskStatus) => (
     <div className="flex-1">
       <div className="flex items-center justify-between mb-3">
