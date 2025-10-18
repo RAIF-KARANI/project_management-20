@@ -19,6 +19,7 @@ export async function initDb() {
       name TEXT NOT NULL,
       email TEXT NOT NULL UNIQUE,
       role TEXT NOT NULL,
+      password TEXT NULL,
       created_at TIMESTAMPTZ NOT NULL
     );
   `);
@@ -28,15 +29,18 @@ export async function initDb() {
   const cnt = res.rows?.[0]?.cnt ?? 0;
   if (cnt === 0) {
     const now = new Date().toISOString();
-    const users: User[] = [
-      { id: randomUUID(), name: 'Alex Admin', email: 'alex.admin@example.com', role: 'ADMIN', createdAt: now },
-      { id: randomUUID(), name: 'Morgan Manager', email: 'morgan.manager@example.com', role: 'MANAGER', createdAt: now },
-      { id: randomUUID(), name: 'Devon Dev', email: 'devon.dev@example.com', role: 'DEVELOPER', createdAt: now },
-      { id: randomUUID(), name: 'Riley Dev', email: 'riley.dev@example.com', role: 'DEVELOPER', createdAt: now },
+    // default password for seeded users: 'password'
+    const seeded = [
+      { id: randomUUID(), name: 'Alex Admin', email: 'alex.admin@example.com', role: 'ADMIN' },
+      { id: randomUUID(), name: 'Morgan Manager', email: 'morgan.manager@example.com', role: 'MANAGER' },
+      { id: randomUUID(), name: 'Devon Dev', email: 'devon.dev@example.com', role: 'DEVELOPER' },
+      { id: randomUUID(), name: 'Riley Dev', email: 'riley.dev@example.com', role: 'DEVELOPER' },
     ];
-    const insertText = 'INSERT INTO users(id,name,email,role,created_at) VALUES($1,$2,$3,$4,$5)';
-    for (const u of users) {
-      await pool.query(insertText, [u.id, u.name, u.email, u.role, u.createdAt]);
+    const insertText = 'INSERT INTO users(id,name,email,role,password,created_at) VALUES($1,$2,$3,$4,$5,$6)';
+    const { hashPassword } = await import('../utils/password');
+    for (const u of seeded) {
+      const pwd = hashPassword('password');
+      await pool.query(insertText, [u.id, u.name, u.email, u.role, pwd, now]);
     }
   }
 }
