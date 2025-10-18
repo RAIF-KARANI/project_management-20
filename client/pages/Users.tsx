@@ -70,9 +70,10 @@ export default function UsersPage() {
                 <option value="MANAGER">MANAGER</option>
                 <option value="DEVELOPER">DEVELOPER</option>
               </select>
+              <input className="w-full rounded border bg-background px-3 py-2" placeholder="Password (min 6)" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
               <div className="flex items-center gap-2 justify-end">
                 <Button variant="ghost" onClick={() => setCreating(false)}>Cancel</Button>
-                <Button onClick={() => createUser.mutate(form)} disabled={!form.email || !form.name}>Create</Button>
+                <Button onClick={() => createUser.mutate(form)} disabled={!form.email || !form.name || !form.password || form.password.length < 6}>Create</Button>
               </div>
             </div>
           </div>
