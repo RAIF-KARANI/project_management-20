@@ -9,6 +9,7 @@ import { registerMetricsRoutes } from "./routes/metrics";
 import { registerAuthRoutes } from "./routes/auth";
 import { seed } from "./routes/store";
 import { initDb, enabled as dbEnabled } from "./db/client";
+import path from "path";
 
 export function createServer() {
   const app = express();
@@ -17,6 +18,9 @@ export function createServer() {
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  // Serve static files from client folder
+  const clientRoot = path.resolve(__dirname, "..", "client");
+  app.use(express.static(clientRoot));
 
   // Seed demo data (in-memory). For production, attempt to init Postgres. If not configured, fall back to in-memory seed.
   initDb().catch((e) => {
@@ -52,6 +56,12 @@ export function createServer() {
         "/api/metrics": { get: { summary: "Get metrics" } },
       },
     });
+  });
+
+  // IMPORTANT: register API routes BEFORE this fallback.
+  // Use a valid pattern for SPA fallback — '*' or /.*/. Do NOT use '/:*' or similar.
+  app.get("/*", (req, res) => {
+    res.sendFile(path.resolve(clientRoot, "index.html"));
   });
 
   return app;

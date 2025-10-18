@@ -7,15 +7,20 @@ import { createServer } from "./server";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 8080,
+    // port removed so Vite will use its default or process.env.PORT
     fs: {
-      allow: ["./client", "./shared"],
+      allow: [
+        path.resolve(__dirname, "client"),
+        path.resolve(__dirname, "shared"),
+        path.resolve(__dirname) // allow project root (so index.html at repo root is served)
+      ],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
     },
   },
   build: {
     outDir: "dist/spa",
   },
+  base: '/project_management-20/', 
   plugins: [react(), expressPlugin()],
   resolve: {
     alias: {
@@ -24,6 +29,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
+
 
 function expressPlugin(): Plugin {
   return {
