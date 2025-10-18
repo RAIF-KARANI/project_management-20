@@ -67,11 +67,29 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   return { id: r.id, name: r.name, email: r.email, role: r.role as User['role'], createdAt: r.created_at };
 }
 
-export async function createUser(user: Omit<User, 'id' | 'createdAt'>): Promise<User> {
+export async function verifyUserCredentials(email: string, password: string): Promise<User | null> {
+  if (!enabled) throw new Error('DB not enabled');
+  const { hashPassword } = await import('../utils/password');
+  const res = await pool.query('SELECT id, name, email, role, password, created_at FROM users WHERE lower(email)=lower($1) LIMIT 1', [email]);
+  if (!res.rows[0]) return null;
+  const r = res.rows[0];
+  const hashed = r.password as string | null;
+  if (!hashed) return null;
+  if (hashPassword(password) !== hashed) return null;
+  return { id: r.id, name: r.name, email: r.email, role: r.role as User['role'], createdAt: r.created_at };
+}
+
+export async function createUser(user: Omit<User, 'id' | 'createdAt'> & { password?: string }): Promise<User> {
   if (!enabled) throw new Error('DB not enabled');
   const id = randomUUID();
   const now = new Date().toISOString();
-  await pool.query('INSERT INTO users(id,name,email,role,created_at) VALUES($1,$2,$3,$4,$5)', [id, user.name, user.email, user.role, now]);
+  if ((user as any).password) {
+    const { hashPassword } = await import('../utils/password');
+    const h = hashPassword((user as any).password);
+    await pool.query('INSERT INTO users(id,name,email,role,password,created_at) VALUES($1,$2,$3,$4,$5,$6)', [id, user.name, user.email, user.role, h, now]);
+  } else {
+    await pool.query('INSERT INTO users(id,name,email,role,created_at) VALUES($1,$2,$3,$4,$5)', [id, user.name, user.email, user.role, now]);
+  }
   return { id, name: user.name, email: user.email, role: user.role as User['role'], createdAt: now };
 }
 
