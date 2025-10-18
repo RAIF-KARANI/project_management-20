@@ -12,7 +12,7 @@ export interface AuthUser {
 interface AuthContextValue {
   user: AuthUser | null;
   token: string | null;
-  login: (email: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
