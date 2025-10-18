@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [users, setUsers] = useState<any[]>([]);
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const nav = useNavigate();
