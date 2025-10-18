@@ -132,6 +132,11 @@ export default function Index() {
   const users = useQuery<User[]>({ queryKey: ["users"], queryFn: () => apiFetch("/api/users", token) });
   const tasks = useQuery<Task[]>({ queryKey: ["tasks"], queryFn: () => apiFetch("/api/tasks", token) });
 
+  // normalize query results to arrays (guard against error responses)
+  const projectsList: Project[] = Array.isArray(projects.data) ? projects.data : [];
+  const usersList: User[] = Array.isArray(users.data) ? users.data : [];
+  const tasksList: Task[] = Array.isArray(tasks.data) ? tasks.data : [];
+
   // ensure lists are arrays to avoid runtime errors when backend returns an error object
   const projectsList = Array.isArray(projects.data) ? projects.data : [];
   const usersList = Array.isArray(users.data) ? users.data : [];
