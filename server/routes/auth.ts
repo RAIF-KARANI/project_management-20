@@ -20,6 +20,7 @@ export function registerAuthRoutes(app: any) {
       let user = null;
       if (pg.enabled) {
         user = await pg.verifyUserCredentials(email, password);
+        console.log('[auth] pg enabled, verifyUserCredentials=', !!user, 'email=', email);
       } else {
         const found = db.users.find(
           (u) => u.email.toLowerCase() === email.toLowerCase(),
@@ -27,10 +28,17 @@ export function registerAuthRoutes(app: any) {
         if (found) {
           const { hashPassword } = await import("../utils/password");
           const expected = userPasswords[found.email];
-          if (expected && hashPassword(password) === expected) user = found;
+          const ok = expected && hashPassword(password) === expected;
+          console.log('[auth] in-memory verify', { email, found: !!found, ok });
+          if (ok) user = found;
+        } else {
+          console.log('[auth] in-memory no user for', email);
         }
       }
-      if (!user) return res.status(401).json({ error: "invalid credentials" });
+      if (!user) {
+        console.log('[auth] login failed for', email);
+        return res.status(401).json({ error: "invalid credentials" });
+      }
 
       const token = jwt.sign(
         { sub: user.id, role: user.role, name: user.name, email: user.email },
