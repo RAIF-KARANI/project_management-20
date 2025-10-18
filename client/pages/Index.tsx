@@ -122,10 +122,11 @@ export default function Index() {
   const [taskForm, setTaskForm] = useState<Partial<CreateTaskInput>>({});
   const [filterStatus, setFilterStatus] = useState<TaskStatus | "ALL">("ALL");
 
-  const metrics = useQuery<MetricsResponse>({ queryKey: ["metrics"], queryFn: () => fetch("/api/metrics").then((r) => r.json()) });
-  const projects = useQuery<Project[]>({ queryKey: ["projects"], queryFn: () => fetch("/api/projects").then((r) => r.json()) });
-  const users = useQuery<User[]>({ queryKey: ["users"], queryFn: () => fetch("/api/users").then((r) => r.json()) });
-  const tasks = useQuery<Task[]>({ queryKey: ["tasks"], queryFn: () => fetch("/api/tasks").then((r) => r.json()) });
+  const { token } = useAuth();
+  const metrics = useQuery<MetricsResponse>({ queryKey: ["metrics"], queryFn: () => apiFetch("/api/metrics", token) });
+  const projects = useQuery<Project[]>({ queryKey: ["projects"], queryFn: () => apiFetch("/api/projects", token) });
+  const users = useQuery<User[]>({ queryKey: ["users"], queryFn: () => apiFetch("/api/users", token) });
+  const tasks = useQuery<Task[]>({ queryKey: ["tasks"], queryFn: () => apiFetch("/api/tasks", token) });
 
   const createProject = useMutation({
     mutationFn: async (input: CreateProjectInput) => fetch("/api/projects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) }).then((r) => r.json()),
