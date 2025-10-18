@@ -12,11 +12,16 @@ interface JwtPayload {
   name?: string;
 }
 
-export async function requireAuth(req: Request, res: Response, next: NextFunction) {
+export async function requireAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const auth = req.headers.authorization;
   if (!auth) return res.status(401).json({ error: "missing authorization" });
   const parts = auth.split(" ");
-  if (parts.length !== 2 || parts[0] !== "Bearer") return res.status(401).json({ error: "invalid authorization format" });
+  if (parts.length !== 2 || parts[0] !== "Bearer")
+    return res.status(401).json({ error: "invalid authorization format" });
   const token = parts[1];
   try {
     const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
@@ -40,7 +45,8 @@ export function requireRole(...roles: string[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).user;
     if (!user) return res.status(401).json({ error: "unauthenticated" });
-    if (!roles.includes(user.role)) return res.status(403).json({ error: "forbidden" });
+    if (!roles.includes(user.role))
+      return res.status(403).json({ error: "forbidden" });
     next();
   };
 }

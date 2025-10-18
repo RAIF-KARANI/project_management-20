@@ -19,7 +19,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/40 text-foreground">
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/70 border-b border-border">
         <div className="container flex h-14 items-center justify-between">
-          <Link to="/dashboard" className="flex items-center gap-2 font-extrabold tracking-tight">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2 font-extrabold tracking-tight"
+          >
             <span className="inline-block h-6 w-6 rounded bg-primary shadow" />
             <span className="text-lg">SprintFlow</span>
           </Link>
@@ -30,7 +33,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 to={n.to}
                 className={cn(
                   "transition-colors hover:text-primary",
-                  location.pathname === n.to ? "text-primary" : "text-muted-foreground",
+                  location.pathname === n.to
+                    ? "text-primary"
+                    : "text-muted-foreground",
                 )}
               >
                 {n.label}
@@ -45,12 +50,21 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                   <div className="font-medium">{user.name}</div>
                   <div className="text-xs">{user.role}</div>
                 </div>
-                <button className="text-sm text-destructive hover:underline" onClick={() => { logout(); navTo('/login'); }}>
+                <button
+                  className="text-sm text-destructive hover:underline"
+                  onClick={() => {
+                    logout();
+                    navTo("/login");
+                  }}
+                >
                   Sign out
                 </button>
               </>
             ) : (
-              <button className="text-sm text-primary hover:underline" onClick={() => navTo('/login')}>
+              <button
+                className="text-sm text-primary hover:underline"
+                onClick={() => navTo("/login")}
+              >
                 Sign in
               </button>
             )}

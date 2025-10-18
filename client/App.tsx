@@ -27,19 +27,19 @@ const App = () => (
       <AuthProvider>
         <BrowserRouter>
           <AppLayout>
-          <ErrorBoundary>
-            <Routes>
-              <Route path="/" element={<Intro />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/dashboard" element={<Index />} />
-              <Route path="/projects" element={<ProjectsPage />} />
-              <Route path="/tasks" element={<TasksPage />} />
-              <Route path="/users" element={<UsersPage />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </ErrorBoundary>
-        </AppLayout>
+            <ErrorBoundary>
+              <Routes>
+                <Route path="/" element={<Intro />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/dashboard" element={<Index />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/tasks" element={<TasksPage />} />
+                <Route path="/users" element={<UsersPage />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ErrorBoundary>
+          </AppLayout>
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>

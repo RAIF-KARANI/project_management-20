@@ -1,5 +1,11 @@
-export async function apiFetch(path: string, token?: string | null, opts?: RequestInit) {
-  const headers: Record<string, string> = { ...(opts?.headers as Record<string, string> || {}) };
+export async function apiFetch(
+  path: string,
+  token?: string | null,
+  opts?: RequestInit,
+) {
+  const headers: Record<string, string> = {
+    ...((opts?.headers as Record<string, string>) || {}),
+  };
   if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(path, { ...opts, headers });
   if (!res.ok) {
