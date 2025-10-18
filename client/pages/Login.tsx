@@ -11,11 +11,21 @@ export default function LoginPage() {
   const { login } = useAuth();
   const nav = useNavigate();
 
+  const seededUsersFallback = [
+    { id: "seed-alex", name: "Alex Admin", email: "alex.admin@example.com", role: "ADMIN" },
+    { id: "seed-morgan", name: "Morgan Manager", email: "morgan.manager@example.com", role: "MANAGER" },
+    { id: "seed-devon", name: "Devon Dev", email: "devon.dev@example.com", role: "DEVELOPER" },
+    { id: "seed-riley", name: "Riley Dev", email: "riley.dev@example.com", role: "DEVELOPER" },
+  ];
+
   useEffect(() => {
     fetch("/api/users")
       .then((r) => r.json())
-      .then(setUsers)
-      .catch(() => setUsers([]));
+      .then((data) => {
+        if (Array.isArray(data) && data.length) setUsers(data);
+        else setUsers(seededUsersFallback);
+      })
+      .catch(() => setUsers(seededUsersFallback));
   }, []);
 
   const handleLogin = async () => {
