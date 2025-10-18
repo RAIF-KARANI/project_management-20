@@ -8,8 +8,8 @@ import { requireAuth, requireRole } from "../middleware/authMiddleware";
 export function registerTaskRoutes(app: any) {
   const router = Router();
 
-  // list tasks - require auth
-  router.get("/", requireAuth, (req: Request, res: Response) => {
+  // list tasks - public (dashboard needs to read tasks without requiring auth)
+  router.get("/", (req: Request, res: Response) => {
     const { projectId, assigneeId, status, limit } = req.query as Record<string, string>;
     let tasks = db.tasks.slice();
     if (projectId) tasks = tasks.filter((t) => t.projectId === projectId);
