@@ -406,6 +406,7 @@ export default function Index() {
                 });
               }
             }}
+            disabled={!canCreateTask}
           >
             Quick Task
           </Button>
