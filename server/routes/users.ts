@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { db } from "./store";
+import { db, userPasswords } from "./store";
 import { randomUUID } from "node:crypto";
 import { createUserSchema, updateUserSchema } from "./validation";
 import { User } from "@shared/api";
