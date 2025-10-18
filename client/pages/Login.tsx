@@ -23,8 +23,8 @@ export default function LoginPage() {
       setLoading(true);
       await login(email, password);
       nav("/dashboard");
-    } catch (err) {
-      alert("Login failed");
+    } catch (err: any) {
+      alert(err?.message || "Login failed");
     } finally {
       setLoading(false);
     }
