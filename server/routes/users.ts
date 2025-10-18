@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { createUserSchema, updateUserSchema } from "./validation";
 import { User } from "@shared/api";
 import * as pg from "../db/client";
+import { requireAuth, requireRole } from "../middleware/authMiddleware";
 
 export function registerUserRoutes(app: any) {
   const router = Router();
