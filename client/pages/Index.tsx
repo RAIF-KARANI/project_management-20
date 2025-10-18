@@ -163,23 +163,33 @@ export default function Index() {
   };
 
   const performStatusChange = (task: Task, newStatus: TaskStatus, comment?: string) => {
-    const patch: any = { status: newStatus };
-    if (comment) patch.description = comment;
-    updateTask.mutate({ id: task.id, patch });
+    try {
+      const patch: any = { status: newStatus };
+      if (comment) patch.description = comment;
+      updateTask.mutate({ id: task.id, patch });
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update task status.");
+    }
   };
 
   const requestStatusChange = (task: Task, newStatus: TaskStatus) => {
-    // admins/managers immediately perform
-    if (user?.role === "ADMIN" || user?.role === "MANAGER") {
-      performStatusChange(task, newStatus);
-      return;
-    }
-    // developers must be assigned and will be prompted for a description
-    if (user?.role === "DEVELOPER") {
-      if (task.assigneeId !== user.id) return alert("You can only update tasks assigned to you");
-      setEditingTaskId(task.id);
-      setEditingNewStatus(newStatus);
-      setEditComment("");
+    try {
+      // admins/managers immediately perform
+      if (user?.role === "ADMIN" || user?.role === "MANAGER") {
+        performStatusChange(task, newStatus);
+        return;
+      }
+      // developers must be assigned and will be prompted for a description
+      if (user?.role === "DEVELOPER") {
+        if (task.assigneeId !== user.id) return alert("You can only update tasks assigned to you");
+        setEditingTaskId(task.id);
+        setEditingNewStatus(newStatus);
+        setEditComment("");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Unexpected error");
     }
   };
 
