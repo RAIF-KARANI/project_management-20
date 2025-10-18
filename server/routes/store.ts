@@ -53,8 +53,8 @@ export async function seed() {
     createdAt: iso(now),
   };
   db.users.push(admin, manager, dev1, dev2);
-  const { hashPassword } = await import('../utils/password');
-  const pwd = hashPassword('password');
+  const { hashPassword } = await import("../utils/password");
+  const pwd = hashPassword("password");
   userPasswords[admin.email] = pwd;
   userPasswords[manager.email] = pwd;
   userPasswords[dev1.email] = pwd;

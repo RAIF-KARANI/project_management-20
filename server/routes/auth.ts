@@ -10,16 +10,22 @@ export function registerAuthRoutes(app: any) {
   const router = Router();
 
   router.post("/login", async (req: Request, res: Response) => {
-    const { email, password } = req.body as { email?: string; password?: string };
-    if (!email || !password) return res.status(400).json({ error: "email and password required" });
+    const { email, password } = req.body as {
+      email?: string;
+      password?: string;
+    };
+    if (!email || !password)
+      return res.status(400).json({ error: "email and password required" });
     try {
       let user = null;
       if (pg.enabled) {
         user = await pg.verifyUserCredentials(email, password);
       } else {
-        const found = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+        const found = db.users.find(
+          (u) => u.email.toLowerCase() === email.toLowerCase(),
+        );
         if (found) {
-          const { hashPassword } = await import('../utils/password');
+          const { hashPassword } = await import("../utils/password");
           const expected = userPasswords[found.email];
           if (expected && hashPassword(password) === expected) user = found;
         }
@@ -43,7 +49,8 @@ export function registerAuthRoutes(app: any) {
     const auth = req.headers.authorization;
     if (!auth) return res.status(401).json({ error: "missing authorization" });
     const parts = auth.split(" ");
-    if (parts.length !== 2 || parts[0] !== "Bearer") return res.status(401).json({ error: "invalid authorization format" });
+    if (parts.length !== 2 || parts[0] !== "Bearer")
+      return res.status(401).json({ error: "invalid authorization format" });
     const token = parts[1];
     try {
       const payload = jwt.verify(token, JWT_SECRET) as any;

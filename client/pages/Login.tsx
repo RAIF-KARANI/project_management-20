@@ -12,10 +12,30 @@ export default function LoginPage() {
   const nav = useNavigate();
 
   const seededUsersFallback = [
-    { id: "seed-alex", name: "Alex Admin", email: "alex.admin@example.com", role: "ADMIN" },
-    { id: "seed-morgan", name: "Morgan Manager", email: "morgan.manager@example.com", role: "MANAGER" },
-    { id: "seed-devon", name: "Devon Dev", email: "devon.dev@example.com", role: "DEVELOPER" },
-    { id: "seed-riley", name: "Riley Dev", email: "riley.dev@example.com", role: "DEVELOPER" },
+    {
+      id: "seed-alex",
+      name: "Alex Admin",
+      email: "alex.admin@example.com",
+      role: "ADMIN",
+    },
+    {
+      id: "seed-morgan",
+      name: "Morgan Manager",
+      email: "morgan.manager@example.com",
+      role: "MANAGER",
+    },
+    {
+      id: "seed-devon",
+      name: "Devon Dev",
+      email: "devon.dev@example.com",
+      role: "DEVELOPER",
+    },
+    {
+      id: "seed-riley",
+      name: "Riley Dev",
+      email: "riley.dev@example.com",
+      role: "DEVELOPER",
+    },
   ];
 
   useEffect(() => {
@@ -82,12 +102,17 @@ export default function LoginPage() {
         />
 
         <div className="flex items-center gap-2">
-          <Button onClick={handleLogin} disabled={loading || !email || !password}>
+          <Button
+            onClick={handleLogin}
+            disabled={loading || !email || !password}
+          >
             {loading ? "Signing in..." : "Sign in"}
           </Button>
         </div>
 
-        <div className="text-xs text-muted-foreground">Use password "password" for seeded demo users.</div>
+        <div className="text-xs text-muted-foreground">
+          Use password "password" for seeded demo users.
+        </div>
       </div>
     </div>
   );

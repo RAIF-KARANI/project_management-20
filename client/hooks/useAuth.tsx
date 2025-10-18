@@ -19,7 +19,9 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem("sf_token"));
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem("sf_token"),
+  );
   const [user, setUser] = useState<AuthUser | null>(() => {
     const raw = localStorage.getItem("sf_user");
     return raw ? JSON.parse(raw) : null;
@@ -29,8 +31,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!token) return;
     (async () => {
       try {
-        const res = await fetch("/api/auth/me", { headers: { Authorization: `Bearer ${token}` } });
-        if (!res.ok) { setToken(null); setUser(null); localStorage.removeItem("sf_token"); localStorage.removeItem("sf_user"); return; }
+        const res = await fetch("/api/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          setToken(null);
+          setUser(null);
+          localStorage.removeItem("sf_token");
+          localStorage.removeItem("sf_user");
+          return;
+        }
         const data = await res.json();
         setUser(data);
         localStorage.setItem("sf_user", JSON.stringify(data));
@@ -42,14 +52,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [token]);
 
   const login = async (email: string, password: string) => {
-    const res = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
     if (!res.ok) {
       let msg = "Login failed";
       try {
         const body = await res.json();
         msg = body.error || JSON.stringify(body);
       } catch (e) {
-        try { msg = await res.text(); } catch(_) {}
+        try {
+          msg = await res.text();
+        } catch (_) {}
       }
       throw new Error(msg);
     }
@@ -67,7 +83,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("sf_user");
   };
 
-  return <AuthContext.Provider value={{ user, token, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, token, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

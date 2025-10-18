@@ -41,11 +41,17 @@ export function registerUserRoutes(app: any) {
           return res.status(201).json(created);
         }
         const now = new Date().toISOString();
-        const user: User = { id: randomUUID(), createdAt: now, name: parsed.data.name, email: parsed.data.email, role: parsed.data.role };
+        const user: User = {
+          id: randomUUID(),
+          createdAt: now,
+          name: parsed.data.name,
+          email: parsed.data.email,
+          role: parsed.data.role,
+        };
         db.users.push(user);
         // store password in in-memory map
         if (parsed.data.password) {
-          const { hashPassword } = await import('../utils/password');
+          const { hashPassword } = await import("../utils/password");
           userPasswords[user.email] = hashPassword(parsed.data.password);
         }
         res.status(201).json(user);
@@ -86,9 +92,16 @@ export function registerUserRoutes(app: any) {
           const patch = { ...parsed.data } as any;
           if (patch.password) {
             // update other fields via updateUser
-            const updated = await pg.updateUser(req.params.id, { name: patch.name, email: patch.email, role: patch.role });
-            await pg.updateUserPassword(req.params.id, patch.password).catch(() => {});
-            if (!updated) return res.status(404).json({ error: 'User not found' });
+            const updated = await pg.updateUser(req.params.id, {
+              name: patch.name,
+              email: patch.email,
+              role: patch.role,
+            });
+            await pg
+              .updateUserPassword(req.params.id, patch.password)
+              .catch(() => {});
+            if (!updated)
+              return res.status(404).json({ error: "User not found" });
             return res.json(updated);
           }
           const updated = await pg.updateUser(req.params.id, parsed.data);
@@ -101,7 +114,7 @@ export function registerUserRoutes(app: any) {
         db.users[i] = { ...db.users[i], ...parsed.data };
         // handle password change for in-memory
         if (parsed.data.password) {
-          const { hashPassword } = await import('../utils/password');
+          const { hashPassword } = await import("../utils/password");
           userPasswords[db.users[i].email] = hashPassword(parsed.data.password);
         }
         res.json(db.users[i]);
