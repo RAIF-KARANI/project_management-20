@@ -8,7 +8,7 @@ export default function UsersPage() {
   const { token } = useAuth();
   const qc = useQueryClient();
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", role: "DEVELOPER" });
+  const [form, setForm] = useState({ name: "", email: "", role: "DEVELOPER", password: "password" });
 
   const users = useQuery({ queryKey: ["users"], queryFn: () => apiFetch('/api/users', token) });
 
