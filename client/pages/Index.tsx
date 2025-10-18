@@ -151,9 +151,9 @@ export default function Index() {
   const canCreateTask = !!user;
 
   const counts = {
-    todo: (tasks.data ?? []).filter((t) => t.status === "TODO").length,
-    inProgress: (tasks.data ?? []).filter((t) => t.status === "IN_PROGRESS").length,
-    done: (tasks.data ?? []).filter((t) => t.status === "DONE").length,
+    todo: tasksList.filter((t) => t.status === "TODO").length,
+    inProgress: tasksList.filter((t) => t.status === "IN_PROGRESS").length,
+    done: tasksList.filter((t) => t.status === "DONE").length,
   };
 
   const performStatusChange = (task: Task, newStatus: TaskStatus, comment?: string) => {
@@ -183,14 +183,14 @@ export default function Index() {
         <div className="text-sm font-medium">
           {column === "TODO" ? "To Do" : column === "IN_PROGRESS" ? "In Progress" : "Done"}
         </div>
-        <div className="text-xs text-muted-foreground">{(tasks.data ?? []).filter((t) => t.status === column).length}</div>
+        <div className="text-xs text-muted-foreground">{tasksList.filter((t) => t.status === column).length}</div>
       </div>
       <div className="space-y-2">
-        {(tasks.data ?? []).filter((t) => t.status === column).slice(0, 6).map((t) => (
+        {tasksList.filter((t) => t.status === column).slice(0, 6).map((t) => (
           <motion.div key={t.id} whileHover={{ x: 4 }} className="rounded border p-3 bg-card flex items-start justify-between gap-3">
             <div>
               <div className="font-medium">{t.title}</div>
-              <div className="text-xs text-muted-foreground mt-1">{t.assigneeId ? users.data?.find((u) => u.id === t.assigneeId)?.name : "Unassigned"}</div>
+              <div className="text-xs text-muted-foreground mt-1">{t.assigneeId ? usersList?.find((u) => u.id === t.assigneeId)?.name : "Unassigned"}</div>
             </div>
             <div className="flex flex-col items-end gap-2">
               <StatusPill status={t.status} />
@@ -221,9 +221,9 @@ export default function Index() {
         </div>
         <div className="flex gap-2">
           <Button onClick={() => {
-            const firstUser = users.data?.[0]?.id;
-            if (projects.data && projects.data[0]) {
-              setTaskForm({ projectId: projects.data[0].id, assigneeId: firstUser ?? null, title: "New Task", status: "TODO" });
+            const firstUser = usersList?.[0]?.id;
+            if (projectsList && projectsList[0]) {
+              setTaskForm({ projectId: projectsList[0].id, assigneeId: firstUser ?? null, title: "New Task", status: "TODO" });
             }
           }}>Quick Task</Button>
           {canCreateProject && (
@@ -255,8 +255,8 @@ export default function Index() {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
-            {projects.data?.map((p) => (
-              <ProjectCard key={p.id} project={p} tasks={(tasks.data ?? []).filter((t) => t.projectId === p.id && (filterStatus === "ALL" ? true : t.status === filterStatus))} />
+            {projectsList?.map((p) => (
+              <ProjectCard key={p.id} project={p} tasks={tasksList.filter((t) => t.projectId === p.id && (filterStatus === "ALL" ? true : t.status === filterStatus))} />
             ))}
           </div>
         </div>
@@ -281,11 +281,11 @@ export default function Index() {
       <section className="mt-8">
         <h2 className="text-lg font-semibold">Recent Tasks</h2>
         <div className="mt-4 grid sm:grid-cols-2 gap-4">
-          {(tasks.data ?? []).filter((t) => filterStatus === "ALL" ? true : t.status === filterStatus).slice(0, 8).map((t) => (
+          {tasksList.filter((t) => filterStatus === "ALL" ? true : t.status === filterStatus).slice(0, 8).map((t) => (
             <motion.div key={t.id} whileHover={{ x: 4 }} className="rounded border p-3 bg-card flex items-center justify-between gap-3">
               <div>
                 <div className="font-medium">{t.title}</div>
-                <div className="text-xs text-muted-foreground mt-1">{t.assigneeId ? users.data?.find((u) => u.id === t.assigneeId)?.name : "Unassigned"} • {t.dueDate ? new Date(t.dueDate).toLocaleDateString() : "No due date"}</div>
+                <div className="text-xs text-muted-foreground mt-1">{t.assigneeId ? usersList?.find((u) => u.id === t.assigneeId)?.name : "Unassigned"} • {t.dueDate ? new Date(t.dueDate).toLocaleDateString() : "No due date"}</div>
               </div>
               <div className="flex flex-col items-end gap-2">
                 <StatusPill status={t.status} />
@@ -328,7 +328,7 @@ export default function Index() {
             <div className="flex items-center gap-2 justify-end mt-3">
               <Button variant="ghost" onClick={() => { setEditingTaskId(null); setEditingNewStatus(null); setEditComment(""); }}>Cancel</Button>
               <Button onClick={() => {
-                const task = (tasks.data ?? []).find((x) => x.id === editingTaskId);
+                const task = tasksList.find((x) => x.id === editingTaskId);
                 if (!task) return;
                 performStatusChange(task, editingNewStatus as TaskStatus, editComment || undefined);
                 setEditingTaskId(null);
@@ -347,12 +347,12 @@ export default function Index() {
             <div className="mt-4 space-y-3">
               <select className="w-full rounded border bg-background px-3 py-2" value={taskForm.projectId ?? ""} onChange={(e) => setTaskForm({ ...taskForm, projectId: e.target.value })}>
                 <option value="">Select project</option>
-                {projects.data?.map((p) => (<option key={p.id} value={p.id}>{p.name}</option>))}
+                {projectsList?.map((p) => (<option key={p.id} value={p.id}>{p.name}</option>))}
               </select>
               <input className="w-full rounded border bg-background px-3 py-2" placeholder="Title" value={taskForm.title ?? ""} onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })} />
               <select className="w-full rounded border bg-background px-3 py-2" value={taskForm.assigneeId ?? ""} onChange={(e) => setTaskForm({ ...taskForm, assigneeId: e.target.value })}>
                 <option value="">Unassigned</option>
-                {users.data?.map((u) => (<option key={u.id} value={u.id}>{u.name}</option>))}
+                {usersList?.map((u) => (<option key={u.id} value={u.id}>{u.name}</option>))}
               </select>
               <div className="flex items-center gap-2 justify-end">
                 <Button variant="ghost" onClick={() => setTaskForm({})}>Cancel</Button>
