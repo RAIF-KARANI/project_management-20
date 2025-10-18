@@ -36,12 +36,18 @@ export function registerUserRoutes(app: any) {
             name: parsed.data.name,
             email: parsed.data.email,
             role: parsed.data.role,
+            password: parsed.data.password ?? undefined,
           });
           return res.status(201).json(created);
         }
         const now = new Date().toISOString();
-        const user: User = { id: randomUUID(), createdAt: now, ...parsed.data };
+        const user: User = { id: randomUUID(), createdAt: now, name: parsed.data.name, email: parsed.data.email, role: parsed.data.role };
         db.users.push(user);
+        // store password in in-memory map
+        if (parsed.data.password) {
+          const { hashPassword } = await import('../utils/password');
+          userPasswords[user.email] = hashPassword(parsed.data.password);
+        }
         res.status(201).json(user);
       } catch (err) {
         console.error(err);
