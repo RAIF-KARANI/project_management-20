@@ -28,7 +28,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <span className="text-lg">SprintFlow</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            {nav.map((n) => (
+            {makeNav(user?.role).map((n) => (
               <Link
                 key={n.to}
                 to={n.to}
