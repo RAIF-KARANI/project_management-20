@@ -13,8 +13,8 @@ export default function UsersPage() {
   const users = useQuery({ queryKey: ["users"], queryFn: () => apiFetch('/api/users', token) });
 
   const createUser = useMutation({
-    mutationFn: async (input: { name: string; email: string; role: string }) => apiFetch('/api/users', token, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['users'] }); setCreating(false); setForm({ name: '', email: '', role: 'DEVELOPER' }); },
+    mutationFn: async (input: { name: string; email: string; role: string; password?: string }) => apiFetch('/api/users', token, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['users'] }); setCreating(false); setForm({ name: '', email: '', role: 'DEVELOPER', password: 'password' }); },
   });
 
   const updateUser = useMutation({
