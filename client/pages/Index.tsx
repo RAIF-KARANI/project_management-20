@@ -122,6 +122,9 @@ export default function Index() {
   const [projForm, setProjForm] = useState<Partial<CreateProjectInput>>({});
   const [taskForm, setTaskForm] = useState<Partial<CreateTaskInput>>({});
   const [filterStatus, setFilterStatus] = useState<TaskStatus | "ALL">("ALL");
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editingNewStatus, setEditingNewStatus] = useState<TaskStatus | null>(null);
+  const [editComment, setEditComment] = useState("");
 
   const { token } = useAuth();
   const metrics = useQuery<MetricsResponse>({ queryKey: ["metrics"], queryFn: () => apiFetch("/api/metrics", token) });
