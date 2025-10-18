@@ -262,7 +262,7 @@ export default function Index() {
   });
 
   const canCreateProject = user?.role === "ADMIN" || user?.role === "MANAGER";
-  const canCreateTask = !!user;
+  const canCreateTask = user?.role === "ADMIN" || user?.role === "MANAGER";
 
   const counts = {
     todo: tasksList.filter((t) => t.status === "TODO").length,
