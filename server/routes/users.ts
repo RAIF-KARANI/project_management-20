@@ -21,7 +21,8 @@ export function registerUserRoutes(app: any) {
     }
   });
 
-  router.post("/", async (req: Request, res: Response) => {
+  // create user - admin only
+  router.post("/", requireAuth, requireRole("ADMIN"), async (req: Request, res: Response) => {
     const parsed = createUserSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(parsed.error.flatten());
     try {
@@ -55,7 +56,8 @@ export function registerUserRoutes(app: any) {
     }
   });
 
-  router.patch("/:id", async (req: Request, res: Response) => {
+  // update user - admin only
+  router.patch("/:id", requireAuth, requireRole("ADMIN"), async (req: Request, res: Response) => {
     const parsed = updateUserSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(parsed.error.flatten());
     try {
@@ -74,7 +76,8 @@ export function registerUserRoutes(app: any) {
     }
   });
 
-  router.delete("/:id", async (req: Request, res: Response) => {
+  // delete user - admin only
+  router.delete("/:id", requireAuth, requireRole("ADMIN"), async (req: Request, res: Response) => {
     try {
       if (pg.enabled) {
         const deleted = await pg.deleteUser(req.params.id);
