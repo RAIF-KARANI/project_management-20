@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import type { MetricsResponse, Project, Task, CreateProjectInput, CreateTaskInput, User, TaskStatus } from "@shared/api";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/api";
 
 function Stat({ label, value, accent }: { label: string; value: number | string; accent?: string }) {
   return (
@@ -129,17 +130,17 @@ export default function Index() {
   const tasks = useQuery<Task[]>({ queryKey: ["tasks"], queryFn: () => apiFetch("/api/tasks", token) });
 
   const createProject = useMutation({
-    mutationFn: async (input: CreateProjectInput) => fetch("/api/projects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) }).then((r) => r.json()),
+    mutationFn: async (input: CreateProjectInput) => apiFetch("/api/projects", token, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["projects"] }); qc.invalidateQueries({ queryKey: ["metrics"] }); },
   });
 
   const createTask = useMutation({
-    mutationFn: async (input: CreateTaskInput) => fetch("/api/tasks", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) }).then((r) => r.json()),
+    mutationFn: async (input: CreateTaskInput) => apiFetch("/api/tasks", token, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["tasks"] }); qc.invalidateQueries({ queryKey: ["metrics"] }); },
   });
 
   const updateTask = useMutation({
-    mutationFn: async ({ id, patch }: { id: string; patch: Partial<Task> }) => fetch(`/api/tasks/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(patch) }).then((r) => r.json()),
+    mutationFn: async ({ id, patch }: { id: string; patch: Partial<Task> }) => apiFetch(`/api/tasks/${id}`, token, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(patch) }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["tasks"] }); qc.invalidateQueries({ queryKey: ["metrics"] }); },
   });
 
