@@ -10,14 +10,19 @@ export function registerAuthRoutes(app: any) {
   const router = Router();
 
   router.post("/login", async (req: Request, res: Response) => {
-    const { email } = req.body as { email?: string };
-    if (!email) return res.status(400).json({ error: "email required" });
+    const { email, password } = req.body as { email?: string; password?: string };
+    if (!email || !password) return res.status(400).json({ error: "email and password required" });
     try {
       let user = null;
       if (pg.enabled) {
-        user = await pg.getUserByEmail(email);
+        user = await pg.verifyUserCredentials(email, password);
       } else {
-        user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+        const found = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+        if (found) {
+          const { hashPassword } = await import('../utils/password');
+          const expected = userPasswords[found.email];
+          if (expected && hashPassword(password) === expected) user = found;
+        }
       }
       if (!user) return res.status(401).json({ error: "invalid credentials" });
 
