@@ -48,8 +48,22 @@ const App = () => (
 const container = document.getElementById("root");
 if (container) {
   const anyWindow = window as any;
-  if (!anyWindow.__APP_ROOT) {
+  try {
+    if (!anyWindow.__APP_ROOT) {
+      anyWindow.__APP_ROOT = createRoot(container);
+    }
+    anyWindow.__APP_ROOT.render(<App />);
+  } catch (err) {
+    // If React warns about multiple createRoot calls or render fails, unmount and recreate
+    // This handles edge cases during HMR where module state might be inconsistent.
+    // eslint-disable-next-line no-console
+    console.warn("Root render failed, recreating root:", err);
+    try {
+      if (anyWindow.__APP_ROOT?.unmount) anyWindow.__APP_ROOT.unmount();
+    } catch (e) {
+      /* ignore */
+    }
     anyWindow.__APP_ROOT = createRoot(container);
+    anyWindow.__APP_ROOT.render(<App />);
   }
-  anyWindow.__APP_ROOT.render(<App />);
 }
