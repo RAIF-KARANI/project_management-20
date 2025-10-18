@@ -3,15 +3,18 @@ import { db } from "./store";
 import { randomUUID } from "node:crypto";
 import { createProjectSchema, updateProjectSchema } from "./validation";
 import { Project } from "@shared/api";
+import { requireAuth, requireRole } from "../middleware/authMiddleware";
 
 export function registerProjectRoutes(app: any) {
   const router = Router();
 
+  // list projects - public
   router.get("/", (_req: Request, res: Response) => {
     res.json(db.projects);
   });
 
-  router.post("/", (req: Request, res: Response) => {
+  // create project - only managers and admins
+  router.post("/", requireAuth, requireRole("ADMIN", "MANAGER"), (req: Request, res: Response) => {
     const parsed = createProjectSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(parsed.error.flatten());
     const now = new Date().toISOString();
@@ -32,7 +35,8 @@ export function registerProjectRoutes(app: any) {
     res.json(project);
   });
 
-  router.patch("/:id", (req: Request, res: Response) => {
+  // update - only managers and admins
+  router.patch("/:id", requireAuth, requireRole("ADMIN", "MANAGER"), (req: Request, res: Response) => {
     const parsed = updateProjectSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(parsed.error.flatten());
     const i = db.projects.findIndex((p) => p.id === req.params.id);
@@ -41,7 +45,8 @@ export function registerProjectRoutes(app: any) {
     res.json(db.projects[i]);
   });
 
-  router.delete("/:id", (req: Request, res: Response) => {
+  // delete - only admins
+  router.delete("/:id", requireAuth, requireRole("ADMIN"), (req: Request, res: Response) => {
     const i = db.projects.findIndex((p) => p.id === req.params.id);
     if (i === -1) return res.status(404).json({ error: "Project not found" });
     const [removed] = db.projects.splice(i, 1);
