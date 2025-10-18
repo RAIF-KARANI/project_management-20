@@ -40,7 +40,12 @@ export default function LoginPage() {
       <div className="mt-4 space-y-3">
         <select
           className="w-full rounded border bg-background px-3 py-2"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            // prefill password for seeded users
+            const sel = users.find((u) => u.email === e.target.value);
+            setPassword(sel ? "password" : "");
+          }}
           value={email}
         >
           <option value="">-- choose demo user --</option>
@@ -51,22 +56,28 @@ export default function LoginPage() {
           ))}
         </select>
 
+        <input
+          className="w-full rounded border px-3 py-2"
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          className="w-full rounded border px-3 py-2"
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
         <div className="flex items-center gap-2">
-          <input
-            className="flex-1 rounded border px-3 py-2"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Button onClick={handleLogin} disabled={loading || !email}>
+          <Button onClick={handleLogin} disabled={loading || !email || !password}>
             {loading ? "Signing in..." : "Sign in"}
           </Button>
         </div>
 
-        <div className="text-xs text-muted-foreground">
-          No password required for demo. For production, connect a proper auth
-          provider or implement hashed passwords + JWT.
-        </div>
+        <div className="text-xs text-muted-foreground">Use password "password" for seeded demo users.</div>
       </div>
     </div>
   );
