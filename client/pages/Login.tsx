@@ -51,7 +51,7 @@ export default function LoginPage() {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      await login(email, password);
+      await login(email.trim(), password);
       nav("/dashboard");
     } catch (err: any) {
       alert(err?.message || "Login failed");
