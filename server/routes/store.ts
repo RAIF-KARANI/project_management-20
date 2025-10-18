@@ -13,6 +13,9 @@ export const db: DB = {
   tasks: [],
 };
 
+// in-memory password map for seeded/demo users: email -> hashed password
+export const userPasswords: Record<string, string> = {};
+
 function iso(date: Date) {
   return date.toISOString();
 }
