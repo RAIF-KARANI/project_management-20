@@ -319,6 +319,27 @@ export default function Index() {
         </div>
       )}
 
+      {editingTaskId && editingNewStatus && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4" onClick={() => setEditingTaskId(null)}>
+          <div className="w-full max-w-md rounded-lg border bg-background p-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-semibold text-lg">Update Task</h3>
+            <p className="text-sm text-muted-foreground mt-1">Add a short description of your progress (optional) before changing status.</p>
+            <textarea className="w-full rounded border bg-background px-3 py-2 mt-3" value={editComment} onChange={(e) => setEditComment(e.target.value)} placeholder="What did you do?" />
+            <div className="flex items-center gap-2 justify-end mt-3">
+              <Button variant="ghost" onClick={() => { setEditingTaskId(null); setEditingNewStatus(null); setEditComment(""); }}>Cancel</Button>
+              <Button onClick={() => {
+                const task = (tasks.data ?? []).find((x) => x.id === editingTaskId);
+                if (!task) return;
+                performStatusChange(task, editingNewStatus as TaskStatus, editComment || undefined);
+                setEditingTaskId(null);
+                setEditingNewStatus(null);
+                setEditComment("");
+              }}>Confirm</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {taskForm && taskForm.title !== undefined && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4" onClick={() => setTaskForm({})}>
           <div className="w-full max-w-md rounded-lg border bg-background p-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
