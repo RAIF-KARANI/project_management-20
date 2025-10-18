@@ -20,7 +20,12 @@ export function registerAuthRoutes(app: any) {
       let user = null;
       if (pg.enabled) {
         user = await pg.verifyUserCredentials(email, password);
-        console.log('[auth] pg enabled, verifyUserCredentials=', !!user, 'email=', email);
+        console.log(
+          "[auth] pg enabled, verifyUserCredentials=",
+          !!user,
+          "email=",
+          email,
+        );
       } else {
         const found = db.users.find(
           (u) => u.email.toLowerCase() === email.toLowerCase(),
@@ -29,14 +34,14 @@ export function registerAuthRoutes(app: any) {
           const { hashPassword } = await import("../utils/password");
           const expected = userPasswords[found.email];
           const ok = expected && hashPassword(password) === expected;
-          console.log('[auth] in-memory verify', { email, found: !!found, ok });
+          console.log("[auth] in-memory verify", { email, found: !!found, ok });
           if (ok) user = found;
         } else {
-          console.log('[auth] in-memory no user for', email);
+          console.log("[auth] in-memory no user for", email);
         }
       }
       if (!user) {
-        console.log('[auth] login failed for', email);
+        console.log("[auth] login failed for", email);
         return res.status(401).json({ error: "invalid credentials" });
       }
 
