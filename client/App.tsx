@@ -14,6 +14,7 @@ import TasksPage from "./pages/Tasks";
 import UsersPage from "./pages/Users";
 import AppLayout from "@/components/layout/AppLayout";
 import { AuthProvider } from "./hooks/useAuth";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
