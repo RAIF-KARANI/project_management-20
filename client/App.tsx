@@ -26,6 +26,7 @@ const App = () => (
       <AuthProvider>
         <BrowserRouter>
           <AppLayout>
+          <ErrorBoundary>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<LoginPage />} />
@@ -35,7 +36,8 @@ const App = () => (
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </AppLayout>
+          </ErrorBoundary>
+        </AppLayout>
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
