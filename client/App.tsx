@@ -44,4 +44,12 @@ const App = () => (
   </QueryClientProvider>
 );
 
-createRoot(document.getElementById("root")!).render(<App />);
+// Avoid calling createRoot multiple times during HMR/reloads
+const container = document.getElementById("root");
+if (container) {
+  const anyWindow = window as any;
+  if (!anyWindow.__APP_ROOT) {
+    anyWindow.__APP_ROOT = createRoot(container);
+  }
+  anyWindow.__APP_ROOT.render(<App />);
+}
