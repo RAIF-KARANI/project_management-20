@@ -3,12 +3,13 @@ import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 
-const nav = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/projects", label: "Projects" },
-  { to: "/tasks", label: "Tasks" },
-  { to: "/users", label: "Users" },
-];
+function makeNav(role?: string | null) {
+  const base = [{ to: "/dashboard", label: "Dashboard" }];
+  if (role === "ADMIN" || role === "MANAGER") base.push({ to: "/projects", label: "Projects" });
+  if (role) base.push({ to: "/tasks", label: "Tasks" });
+  if (role === "ADMIN") base.push({ to: "/users", label: "Users" });
+  return base;
+}
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
