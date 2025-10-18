@@ -20,7 +20,7 @@ function iso(date: Date) {
   return date.toISOString();
 }
 
-export function seed() {
+export async function seed() {
   if (db.users.length) return; // seed once
   const now = new Date();
 
