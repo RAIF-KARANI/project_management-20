@@ -198,11 +198,11 @@ export default function Index() {
               <div className="flex gap-1">
                 <button className="text-xs text-muted-foreground hover:text-primary" title="Move forward" onClick={() => {
                   const next: Record<TaskStatus, TaskStatus> = { TODO: "IN_PROGRESS", IN_PROGRESS: "DONE", DONE: "DONE" };
-                  if (t.status !== "DONE") updateTask.mutate({ id: t.id, patch: { status: next[t.status] } as any });
+                  if (t.status !== "DONE") requestStatusChange(t, next[t.status]);
                 }}>▶</button>
                 <button className="text-xs text-muted-foreground hover:text-destructive" title="Move back" onClick={() => {
                   const prev: Record<TaskStatus, TaskStatus> = { TODO: "TODO", IN_PROGRESS: "TODO", DONE: "IN_PROGRESS" };
-                  if (t.status !== "TODO") updateTask.mutate({ id: t.id, patch: { status: prev[t.status] } as any });
+                  if (t.status !== "TODO") requestStatusChange(t, prev[t.status]);
                 }}>◀</button>
               </div>
             </div>
