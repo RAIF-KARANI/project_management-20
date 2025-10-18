@@ -71,9 +71,10 @@ export default function LoginPage() {
         <select
           className="w-full rounded border bg-background px-3 py-2"
           onChange={(e) => {
-            setEmail(e.target.value);
+            const v = e.target.value.trim();
+            setEmail(v);
             // prefill password for seeded users
-            const sel = users.find((u) => u.email === e.target.value);
+            const sel = users.find((u) => u.email === v);
             setPassword(sel ? "password" : "");
           }}
           value={email}
