@@ -82,6 +82,17 @@ export function registerUserRoutes(app: any) {
       if (!parsed.success) return res.status(400).json(parsed.error.flatten());
       try {
         if (pg.enabled) {
+          // if password provided, handle in pg client
+          const patch = { ...parsed.data } as any;
+          if (patch.password) {
+            // pg.updateUser doesn't handle password, perform direct query via client
+            const { hashPassword } = await import('../utils/password');
+            // update other fields via updateUser
+            const updated = await pg.updateUser(req.params.id, { name: patch.name, email: patch.email, role: patch.role });
+            await pg.pool?.query?.('UPDATE users SET password=$1 WHERE id=$2', [hashPassword(patch.password), req.params.id]).catch(() => {});
+            if (!updated) return res.status(404).json({ error: 'User not found' });
+            return res.json(updated);
+          }
           const updated = await pg.updateUser(req.params.id, parsed.data);
           if (!updated)
             return res.status(404).json({ error: "User not found" });
@@ -90,6 +101,11 @@ export function registerUserRoutes(app: any) {
         const i = db.users.findIndex((u) => u.id === req.params.id);
         if (i === -1) return res.status(404).json({ error: "User not found" });
         db.users[i] = { ...db.users[i], ...parsed.data };
+        // handle password change for in-memory
+        if (parsed.data.password) {
+          const { hashPassword } = await import('../utils/password');
+          userPasswords[db.users[i].email] = hashPassword(parsed.data.password);
+        }
         res.json(db.users[i]);
       } catch (err) {
         console.error(err);
