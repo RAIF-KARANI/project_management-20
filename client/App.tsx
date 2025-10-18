@@ -15,6 +15,7 @@ import TasksPage from "./pages/Tasks";
 import UsersPage from "./pages/Users";
 import AppLayout from "@/components/layout/AppLayout";
 import { AuthProvider } from "./hooks/useAuth";
+import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 const queryClient = new QueryClient();
@@ -31,10 +32,10 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Intro />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/dashboard" element={<Index />} />
-                <Route path="/projects" element={<ProjectsPage />} />
-                <Route path="/tasks" element={<TasksPage />} />
-                <Route path="/users" element={<UsersPage />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+              <Route path="/projects" element={<ProtectedRoute allowedRoles={["ADMIN","MANAGER"]}><ProjectsPage /></ProtectedRoute>} />
+              <Route path="/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
+              <Route path="/users" element={<ProtectedRoute allowedRoles={["ADMIN"]}><UsersPage /></ProtectedRoute>} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
