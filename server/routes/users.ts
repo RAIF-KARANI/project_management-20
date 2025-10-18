@@ -85,11 +85,9 @@ export function registerUserRoutes(app: any) {
           // if password provided, handle in pg client
           const patch = { ...parsed.data } as any;
           if (patch.password) {
-            // pg.updateUser doesn't handle password, perform direct query via client
-            const { hashPassword } = await import('../utils/password');
             // update other fields via updateUser
             const updated = await pg.updateUser(req.params.id, { name: patch.name, email: patch.email, role: patch.role });
-            await pg.pool?.query?.('UPDATE users SET password=$1 WHERE id=$2', [hashPassword(patch.password), req.params.id]).catch(() => {});
+            await pg.updateUserPassword(req.params.id, patch.password).catch(() => {});
             if (!updated) return res.status(404).json({ error: 'User not found' });
             return res.json(updated);
           }
