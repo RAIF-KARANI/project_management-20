@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 
 const nav = [
-  { to: "/", label: "Dashboard" },
+  { to: "/dashboard", label: "Dashboard" },
   { to: "/projects", label: "Projects" },
   { to: "/tasks", label: "Tasks" },
   { to: "/users", label: "Users" },
@@ -19,7 +19,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/40 text-foreground">
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/70 border-b border-border">
         <div className="container flex h-14 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-extrabold tracking-tight">
+          <Link to="/dashboard" className="flex items-center gap-2 font-extrabold tracking-tight">
             <span className="inline-block h-6 w-6 rounded bg-primary shadow" />
             <span className="text-lg">SprintFlow</span>
           </Link>

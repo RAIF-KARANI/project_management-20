@@ -18,7 +18,7 @@ export default function LoginPage() {
     try {
       setLoading(true);
       await login(email);
-      nav("/");
+      nav("/dashboard");
     } catch (err) {
       alert("Login failed");
     } finally {
