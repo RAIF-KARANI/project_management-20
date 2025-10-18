@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { db, findUser } from "./store";
+import { db, findUser, userPasswords } from "./store";
 import jwt from "jsonwebtoken";
 import * as pg from "../db/client";
 
