@@ -104,6 +104,13 @@ export async function updateUser(id: string, patch: Partial<Omit<User, 'id' | 'c
   return { id, name, email, role, createdAt: existing.createdAt };
 }
 
+export async function updateUserPassword(id: string, password: string): Promise<void> {
+  if (!enabled) throw new Error('DB not enabled');
+  const { hashPassword } = await import('../utils/password');
+  const h = hashPassword(password);
+  await pool.query('UPDATE users SET password=$1 WHERE id=$2', [h, id]);
+}
+
 export async function deleteUser(id: string): Promise<User | null> {
   if (!enabled) throw new Error('DB not enabled');
   const existing = await getUserById(id);
