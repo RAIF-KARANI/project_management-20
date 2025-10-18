@@ -290,8 +290,8 @@ export default function Index() {
               <div className="flex flex-col items-end gap-2">
                 <StatusPill status={t.status} />
                 <div className="flex gap-2">
-                  <button className="text-xs text-muted-foreground hover:text-primary" onClick={() => updateTask.mutate({ id: t.id, patch: { status: t.status === "TODO" ? "IN_PROGRESS" : t.status === "IN_PROGRESS" ? "DONE" : "DONE" } })}>Advance</button>
-                  <button className="text-xs text-muted-foreground hover:text-destructive" onClick={() => updateTask.mutate({ id: t.id, patch: { status: t.status === "DONE" ? "IN_PROGRESS" : t.status === "IN_PROGRESS" ? "TODO" : "TODO" } })}>Back</button>
+                  <button className="text-xs text-muted-foreground hover:text-primary" onClick={() => requestStatusChange(t, t.status === "TODO" ? "IN_PROGRESS" : t.status === "IN_PROGRESS" ? "DONE" : "DONE")}>Advance</button>
+                  <button className="text-xs text-muted-foreground hover:text-destructive" onClick={() => requestStatusChange(t, t.status === "DONE" ? "IN_PROGRESS" : t.status === "IN_PROGRESS" ? "TODO" : "TODO")}>Back</button>
                 </div>
               </div>
             </motion.div>
