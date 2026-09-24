@@ -4,7 +4,7 @@ import path from "path";
 import { createServer } from "./server";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ command }) => ({
   server: {
     host: "::",
     // port removed so Vite will use its default or process.env.PORT
@@ -20,7 +20,10 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: "dist/spa",
   },
-  base: '/project_management-20/', 
+  // Only apply the GitHub Pages subpath base for production builds.
+  // Using it in dev breaks module script loading since index.html
+  // references entry scripts via root-absolute paths (e.g. /client/App.tsx).
+  base: command === "build" ? "/project_management-20/" : "/",
   plugins: [react(), expressPlugin()],
   resolve: {
     alias: {
@@ -38,7 +41,13 @@ function expressPlugin(): Plugin {
     configureServer(server) {
       const app = createServer();
 
-      // Add Express app as middleware to Vite dev server
+      // Mount BEFORE Vite's own middlewares (createServer() only defines
+      // /api/* routes, no catch-all). This lets Express claim /api/* first;
+      // everything else falls through to Vite. Mounting this after Vite's
+      // internals instead would let Vite's htmlFallbackMiddleware rewrite
+      // unmatched GET requests (including /api/* calls, since browser
+      // fetch() sends "Accept: */*" by default) to /index.html before
+      // Express ever sees them, breaking every API response.
       server.middlewares.use(app);
     },
   };

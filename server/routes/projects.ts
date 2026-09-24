@@ -22,13 +22,15 @@ export function registerProjectRoutes(app: any) {
       const parsed = createProjectSchema.safeParse(req.body);
       if (!parsed.success) return res.status(400).json(parsed.error.flatten());
       const now = new Date().toISOString();
+      const { name, description, memberIds, deadline } = parsed.data;
       const project: Project = {
         id: randomUUID(),
+        name,
+        description,
+        memberIds: memberIds ?? [],
+        deadline,
         createdAt: now,
-        memberIds: [],
-        ...parsed.data,
       };
-      if (!project.memberIds) project.memberIds = [];
       db.projects.push(project);
       res.status(201).json(project);
     },

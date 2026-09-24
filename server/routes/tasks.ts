@@ -34,13 +34,19 @@ export function registerTaskRoutes(app: any) {
       const parsed = createTaskSchema.safeParse(req.body);
       if (!parsed.success) return res.status(400).json(parsed.error.flatten());
       const now = new Date().toISOString();
+      const { projectId, title, description, assigneeId, status, dueDate } =
+        parsed.data;
       const task: Task = {
         id: randomUUID(),
+        projectId,
+        title,
+        description,
+        assigneeId,
+        status: status ?? "TODO",
+        dueDate,
         comments: [],
-        status: "TODO",
         createdAt: now,
         updatedAt: now,
-        ...parsed.data,
       };
       db.tasks.push(task);
       res.status(201).json(task);

@@ -9,7 +9,6 @@ import { registerMetricsRoutes } from "./routes/metrics";
 import { registerAuthRoutes } from "./routes/auth";
 import { seed } from "./routes/store";
 import { initDb, enabled as dbEnabled } from "./db/client";
-import path from "path";
 
 export function createServer() {
   const app = express();
@@ -18,15 +17,18 @@ export function createServer() {
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  // Serve static files from client folder
-  const clientRoot = path.resolve(__dirname, "..", "client");
-  app.use(express.static(clientRoot));
 
   // Seed demo data (in-memory). For production, attempt to init Postgres. If not configured, fall back to in-memory seed.
-  initDb().catch((e) => {
-    console.warn("Postgres not initialized (DATABASE_URL missing or error)", e?.message ?? e);
-    seed();
-  });
+  // Note: initDb() resolves (not rejects) when DATABASE_URL is unset, so the
+  // in-memory fallback must also run on the success path, not just on error.
+  initDb()
+    .then(() => {
+      if (!dbEnabled) seed();
+    })
+    .catch((e) => {
+      console.warn("Postgres not initialized (DATABASE_URL missing or error)", e?.message ?? e);
+      seed();
+    });
 
   // Health
   app.get("/api/ping", (_req, res) => {
@@ -58,11 +60,10 @@ export function createServer() {
     });
   });
 
-  // IMPORTANT: register API routes BEFORE this fallback.
-  // Use a valid pattern for SPA fallback — '*' or /.*/. Do NOT use '/:*' or similar.
-  app.get("/*", (req, res) => {
-    res.sendFile(path.resolve(clientRoot, "index.html"));
-  });
+  // Static file serving and SPA fallback are handled by the caller:
+  // Vite's dev server serves and transforms client/index.html directly
+  // (needed for HMR/React-refresh preamble injection), while
+  // node-build.ts serves the built dist/spa bundle in production.
 
   return app;
 }
